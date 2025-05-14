@@ -1,0 +1,21 @@
+{
+  "name": "smartwallet-examples",
+  "type": "module",
+  "scripts": {
+    "sponsored": "ts-node sponsored/src/index.ts",
+    "erc20": "ts-node erc20/src/index.ts",
+    "native": "ts-node native/src/index.ts",
+    "kernel-sponsored": "ts-node kernel-sponsored/src/index.ts",
+    "estimate": "ts-node estimates/src/index.ts"
+  },
+  "dependencies": {
+    "@gelatonetwork/smartwallet": "0.0.2-alpha.7",
+    "viem": "^2.28"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "dotenv": "^16.5.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5"
+  }
+}
