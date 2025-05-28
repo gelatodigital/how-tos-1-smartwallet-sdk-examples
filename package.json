@@ -9,7 +9,7 @@
     "estimate": "ts-node estimates/src/index.ts"
   },
   "dependencies": {
-    "@gelatonetwork/smartwallet": "0.0.2",
+    "@gelatonetwork/smartwallet": "0.0.5",
     "viem": "^2.29"
   },
   "devDependencies": {

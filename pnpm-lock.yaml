@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@gelatonetwork/smartwallet':
-        specifier: 0.0.2
-        version: 0.0.2(typescript@5.8.3)(viem@2.29.2(typescript@5.8.3))
+        specifier: 0.0.5
+        version: 0.0.5(typescript@5.8.3)(viem@2.29.2(typescript@5.8.3))
       viem:
         specifier: ^2.29
         version: 2.29.2(typescript@5.8.3)
@@ -183,8 +183,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@gelatonetwork/smartwallet@0.0.2':
-    resolution: {integrity: sha512-C2Fyi7Mh+9P/4/GPmdNiUsyOFss2o8WINKNLFOE++bHgQqEa8EwJ9B0m1IohTGiCp/+kXTk0YIRss5Dl2BWnJw==}
+  '@gelatonetwork/smartwallet@0.0.5':
+    resolution: {integrity: sha512-Gn1bPvY+K3xqaVTkcjRLhZk+W+IEaxzRAIaKJP2xUBFyvWu0PajJW9zWtChdZuIx3Mp0jyFHee9+3xjSaboy8g==}
     peerDependencies:
       typescript: ^5.3
       viem: ~2.29
@@ -388,7 +388,7 @@ snapshots:
   '@esbuild/win32-x64@0.25.4':
     optional: true
 
-  '@gelatonetwork/smartwallet@0.0.2(typescript@5.8.3)(viem@2.29.2(typescript@5.8.3))':
+  '@gelatonetwork/smartwallet@0.0.5(typescript@5.8.3)(viem@2.29.2(typescript@5.8.3))':
     dependencies:
       isomorphic-ws: 5.0.0(ws@8.18.2)
       viem: 2.29.2(typescript@5.8.3)
