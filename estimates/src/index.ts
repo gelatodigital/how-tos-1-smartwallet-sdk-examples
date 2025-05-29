@@ -2,7 +2,7 @@ import "dotenv/config";
 import { createGelatoSmartWalletClient, sponsored } from "@gelatonetwork/smartwallet";
 import { http, type Hex, createWalletClient, formatEther, encodeFunctionData } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { sepolia } from "viem/chains";
+import { inkSepoliaChain } from "../../constants";
 
 const sponsorApiKey = process.env.SPONSOR_API_KEY;
 
@@ -18,7 +18,7 @@ const account = privateKeyToAccount(privateKey);
 
 const client = createWalletClient({
   account,
-  chain: sepolia,
+  chain: inkSepoliaChain,
   transport: http()
 });
 

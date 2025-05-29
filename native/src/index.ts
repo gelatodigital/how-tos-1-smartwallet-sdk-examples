@@ -6,7 +6,7 @@ import {
 } from "@gelatonetwork/smartwallet";
 import { http, type Hex, createWalletClient, encodeFunctionData } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { baseSepolia } from "viem/chains";
+import { inkSepoliaChain } from "../../constants";
 
 const privateKey = process.env.PRIVATE_KEY as Hex;
 
@@ -21,7 +21,7 @@ const account = privateKeyToAccount(privateKey);
 
 const client = createWalletClient({
   account,
-  chain: baseSepolia,
+  chain: inkSepoliaChain,
   transport: http(),
 });
 
