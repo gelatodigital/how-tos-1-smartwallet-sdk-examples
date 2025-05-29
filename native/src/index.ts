@@ -4,7 +4,7 @@ import {
   createGelatoSmartWalletClient,
   native,
 } from "@gelatonetwork/smartwallet";
-import { http, type Hex, createWalletClient } from "viem";
+import { http, type Hex, createWalletClient, encodeFunctionData } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { baseSepolia } from "viem/chains";
 
@@ -14,6 +14,9 @@ if (!privateKey) {
   throw new Error("PRIVATE_KEY is not set");
 }
 
+// Counter contract address
+const counterAddress = "0xEEeBe2F778AA186e88dCf2FEb8f8231565769C27";
+
 const account = privateKeyToAccount(privateKey);
 
 const client = createWalletClient({
@@ -22,13 +25,30 @@ const client = createWalletClient({
   transport: http(),
 });
 
+// Example of creating a payload for increment() function
+const incrementAbi = [{
+  name: "increment",
+  type: "function",
+  stateMutability: "nonpayable",
+  inputs: [],
+  outputs: []
+}] as const;
+
+// Create the encoded function data
+const incrementData = encodeFunctionData({
+  abi: incrementAbi,
+  functionName: "increment"
+});
+
+console.log("Encoded increment() function data:", incrementData);
+
 createGelatoSmartWalletClient(client)
   .execute({
     payment: native(),
     calls: [
       {
-        to: "0xa8851f5f279eD47a292f09CA2b6D40736a51788E",
-        data: "0xd09de08a",
+        to: counterAddress, // Using the counter contract address
+        data: incrementData,
         value: 0n,
       },
     ],
