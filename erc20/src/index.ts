@@ -14,7 +14,7 @@ if (!privateKey) {
   throw new Error("PRIVATE_KEY is not set");
 }
 
-// USDC on Base Sepolia
+// WETH on Ink Sepolia  
 const token = "0x60C67E75292B101F9289f11f59aD7DD75194CCa6";
 
 // Counter contract address
