@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { http, createWalletClient, parseEther, parseAbi, createPublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { inkSepoliaChain } from "../constants";
+import { inkSepolia } from "viem/chains";
 
 // WETH contract address on Ink Sepolia
 const WETH_ADDRESS = "0x60C67E75292B101F9289f11f59aD7DD75194CCa6";
@@ -18,12 +18,12 @@ async function getWeth(privateKey: string, amount: string) {
   
   const walletClient = createWalletClient({
     account,
-    chain: inkSepoliaChain,
+    chain: inkSepolia,
     transport: http(),
   });
 
   const publicClient = createPublicClient({
-    chain: inkSepoliaChain,
+    chain: inkSepolia,
     transport: http(),
   });
 

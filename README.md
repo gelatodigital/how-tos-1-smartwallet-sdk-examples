@@ -23,39 +23,15 @@ Then edit the `.env` file with your private key and optional sponsor API key (re
 
 ## Chain Configuration
 
-All examples use Ink Sepolia as the target chain, configured using viem. The chain configuration is centralized in `constants/index.ts`:
+All examples use Ink Sepolia as the target chain, configured using viem. The chain is imported directly from `viem/chains`:
 
 ```typescript
-import { defineChain } from 'viem'
+import { inkSepolia } from 'viem/chains'
 
-export const inkSepoliaChain = defineChain({
-  id: 763373,
-  name: 'Ink Sepolia',
-  network: 'ink-sepolia',
-  nativeCurrency: {
-    decimals: 18,
-    name: 'Ether',
-    symbol: 'ETH',
-  },
-  rpcUrls: {
-    default: {
-      http: ['https://rpc-gel-sepolia.inkonchain.com'],
-    },
-    public: {
-      http: ['https://rpc-gel-sepolia.inkonchain.com'],
-    },
-  },
-  blockExplorers: {
-    default: {
-      name: 'Ink Sepolia Explorer',
-      url: 'https://explorer-sepolia.inkonchain.com/',
-    },
-  },
-  contracts: {
-    multicall3: {
-      address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-    },
-  },
+// Use in client configuration
+const client = createWalletClient({
+  chain: inkSepolia,
+  transport: http(),
 })
 ```
 
@@ -79,7 +55,7 @@ This example demonstrates how to send a native ETH transaction using a smart wal
 // Create a smart wallet client
 const smartWalletClient = await createSmartWalletClient({
   owner: privateKeyToAccount(process.env.PRIVATE_KEY!),
-  chain: inkSepoliaChain,
+  chain: inkSepolia,
   transport: http(),
 })
 
@@ -103,7 +79,7 @@ This example shows how to send ERC20 tokens (WETH) using a smart wallet:
 // Create a smart wallet client
 const smartWalletClient = await createSmartWalletClient({
   owner: privateKeyToAccount(process.env.PRIVATE_KEY!),
-  chain: inkSepoliaChain,
+  chain: inkSepolia,
   transport: http(),
 })
 
@@ -129,7 +105,7 @@ This example demonstrates how to estimate gas costs for smart wallet operations:
 // Create a smart wallet client
 const smartWalletClient = await createSmartWalletClient({
   owner: privateKeyToAccount(process.env.PRIVATE_KEY!),
-  chain: inkSepoliaChain,
+  chain: inkSepolia,
   transport: http(),
 })
 
@@ -153,7 +129,7 @@ This example shows how to send transactions with gas sponsorship:
 // Create a sponsored smart wallet client
 const smartWalletClient = await createSmartWalletClient({
   owner: privateKeyToAccount(process.env.PRIVATE_KEY!),
-  chain: inkSepoliaChain,
+  chain: inkSepolia,
   transport: http(),
   sponsorApiKey: process.env.SPONSOR_API_KEY,
 })
@@ -178,7 +154,7 @@ This example demonstrates how to use Kernel smart wallets with gas sponsorship:
 // Create a Kernel smart wallet client
 const smartWalletClient = await createSmartWalletClient({
   owner: privateKeyToAccount(process.env.PRIVATE_KEY!),
-  chain: inkSepoliaChain,
+  chain: inkSepolia,
   transport: http(),
   sponsorApiKey: process.env.SPONSOR_API_KEY,
   kernelVersion: '0.3.0',
@@ -204,7 +180,7 @@ pnpm kernel-sponsored
 // Create wallet client
 const walletClient = createWalletClient({
   account: signer,
-  chain: baseSepolia,
+  chain: inkSepolia,
   transport: http(""),
 })
 
@@ -230,7 +206,7 @@ Here's how to set up a Kernel smart wallet client directly:
 // Create wallet client
 const walletClient = createWalletClient({
   account,
-  chain: baseSepolia,
+  chain: inkSepolia,
   transport: http(""),
 })
 
@@ -259,7 +235,7 @@ const kernelAccount = await createKernelAccount(publicClient as any, {
 // Create Kernel client
 const kernelClient = createKernelAccountClient({
   account: kernelAccount,
-  chain: baseSepolia,
+  chain: inkSepolia,
   bundlerTransport: http(process.env.NEXT_PUBLIC_ULTRA_RELAY_URL || ""),
   paymaster: undefined,
   userOperation: {
