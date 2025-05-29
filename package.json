@@ -6,10 +6,11 @@
     "erc20": "tsx erc20/src/index.ts",
     "native": "tsx native/src/index.ts",
     "kernel-sponsored": "tsx kernel-sponsored/src/index.ts",
-    "estimate": "tsx estimates/src/index.ts"
+    "estimate": "tsx estimates/src/index.ts",
+    "getWeth": "tsx helper/getWeth.ts"
   },
   "dependencies": {
-    "@gelatonetwork/smartwallet": "0.0.5",
+    "@gelatonetwork/smartwallet": "0.0.6",
     "ts-node": "^10.9.2",
     "viem": "^2.29"
   },

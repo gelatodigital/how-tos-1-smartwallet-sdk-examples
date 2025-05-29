@@ -15,7 +15,7 @@ if (!privateKey) {
 }
 
 // USDC on Base Sepolia
-const token = "0x036CbD53842c5426634e7929541eC2318f3dCF7e";
+const token = "0x60C67E75292B101F9289f11f59aD7DD75194CCa6";
 
 // Counter contract address
 const counterAddress = "0xEEeBe2F778AA186e88dCf2FEb8f8231565769C27";
