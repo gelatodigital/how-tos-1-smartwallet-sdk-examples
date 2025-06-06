@@ -7,10 +7,12 @@
     "native": "tsx native/src/index.ts",
     "kernel-sponsored": "tsx kernel-sponsored/src/index.ts",
     "estimate": "tsx estimates/src/index.ts",
+    "safe-sponsored": "tsx safe-sponsored/src/index.ts",
+    "custom-sponsored": "tsx custom-sponsored/src/index.ts",
     "getWeth": "tsx helper/getWeth.ts"
   },
   "dependencies": {
-    "@gelatonetwork/smartwallet": "0.0.6",
+    "@gelatonetwork/smartwallet": "0.0.7",
     "ts-node": "^10.9.2",
     "viem": "^2.29"
   },

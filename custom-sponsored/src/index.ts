@@ -2,28 +2,21 @@ import "dotenv/config";
 import {
   type GelatoTaskStatus,
   createGelatoSmartWalletClient,
-  native,
+  sponsored,
 } from "@gelatonetwork/smartwallet";
-import {
-  http,
-  type Hex,
-  createWalletClient,
-  encodeFunctionData,
-  parseEther,
-  createPublicClient,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { inkSepolia } from "viem/chains";
-import { gelato } from "@gelatonetwork/smartwallet/accounts";
+import { custom } from "@gelatonetwork/smartwallet/accounts";
+import { http, type Hex, createPublicClient, createWalletClient, encodeFunctionData } from "viem";
+import { entryPoint08Abi, entryPoint08Address } from "viem/account-abstraction";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { getChainConfigByName, ChainConfig } from "../../constants/chainConfig";
 
+const sponsorApiKey = process.env.SPONSOR_API_KEY;
 
-const privateKey = process.env.PRIVATE_KEY as Hex;
-if (!privateKey) {
-  throw new Error("PRIVATE_KEY is not set");
+if (!sponsorApiKey) {
+  throw new Error("SPONSOR_API_KEY is not set");
 }
 
-//Note: Ink Sepolia Chain Config, Use the chain name to get the chain config
+// Get chain config
 const chainConfig = getChainConfigByName("inkSepolia") as ChainConfig;
 
 // Example of creating a payload for increment() function
@@ -43,8 +36,7 @@ const incrementData = encodeFunctionData({
   functionName: "increment",
 });
 
-console.log("Encoded increment() function data:", incrementData);
-
+const privateKey = (process.env.PRIVATE_KEY ?? generatePrivateKey()) as Hex;
 const owner = privateKeyToAccount(privateKey);
 
 const publicClient = createPublicClient({
@@ -53,10 +45,27 @@ const publicClient = createPublicClient({
 });
 
 (async () => {
-  const account = await gelato({
+  // Defining an EIP7702 account using as delegation address "0x11923b4c785d87bb34da4d4e34e9feea09179289"
+  // Using ERC4337 and entry point v0.8
+  const account = await custom<typeof entryPoint08Abi, "0.8">({
     owner,
     client: publicClient,
+    authorization: {
+      account: owner,
+      address: "0x11923b4c785d87bb34da4d4e34e9feea09179289",
+    },
+    entryPoint: {
+      abi: entryPoint08Abi,
+      address: entryPoint08Address,
+      version: "0.8",
+    },
+    scw: {
+      encoding: "erc7821",
+    },
+    eip7702: true,
   });
+
+  console.log("Account address:", account.address);
 
   const client = createWalletClient({
     account,
@@ -64,13 +73,15 @@ const publicClient = createPublicClient({
     transport: http(),
   });
 
-  const swc = await createGelatoSmartWalletClient(client);
+  const swc = await createGelatoSmartWalletClient(client, {
+    apiKey: sponsorApiKey,
+  });
 
   const response = await swc.execute({
-    payment: native(),
+    payment: sponsored(sponsorApiKey),
     calls: [
       {
-        to: chainConfig.targetContract,
+        to: chainConfig.targetContract!,
         data: incrementData,
         value: 0n,
       },

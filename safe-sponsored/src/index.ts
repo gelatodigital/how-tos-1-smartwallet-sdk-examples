@@ -2,27 +2,25 @@ import "dotenv/config";
 import {
   type GelatoTaskStatus,
   createGelatoSmartWalletClient,
-  native,
+  sponsored,
 } from "@gelatonetwork/smartwallet";
+import { safe } from "@gelatonetwork/smartwallet/accounts";
 import {
   http,
   type Hex,
+  createPublicClient,
   createWalletClient,
   encodeFunctionData,
-  parseEther,
-  createPublicClient,
 } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { inkSepolia } from "viem/chains";
-import { gelato } from "@gelatonetwork/smartwallet/accounts";
+import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import { getChainConfigByName, ChainConfig } from "../../constants/chainConfig";
 
+// Sponsor API Key for configured chain
+const sponsorApiKey = process.env.SPONSOR_API_KEY;
 
-const privateKey = process.env.PRIVATE_KEY as Hex;
-if (!privateKey) {
-  throw new Error("PRIVATE_KEY is not set");
+if (!sponsorApiKey) {
+  throw new Error("SPONSOR_API_KEY is not set");
 }
-
 //Note: Ink Sepolia Chain Config, Use the chain name to get the chain config
 const chainConfig = getChainConfigByName("inkSepolia") as ChainConfig;
 
@@ -45,6 +43,7 @@ const incrementData = encodeFunctionData({
 
 console.log("Encoded increment() function data:", incrementData);
 
+const privateKey = (process.env.PRIVATE_KEY ?? generatePrivateKey()) as Hex;
 const owner = privateKeyToAccount(privateKey);
 
 const publicClient = createPublicClient({
@@ -53,10 +52,13 @@ const publicClient = createPublicClient({
 });
 
 (async () => {
-  const account = await gelato({
-    owner,
+  const account = await safe({
     client: publicClient,
+    owners: [owner],
+    version: "1.4.1",
   });
+
+  console.log("Account address:", account.address);
 
   const client = createWalletClient({
     account,
@@ -64,10 +66,12 @@ const publicClient = createPublicClient({
     transport: http(),
   });
 
-  const swc = await createGelatoSmartWalletClient(client);
+  const swc = await createGelatoSmartWalletClient(client, {
+    apiKey: sponsorApiKey,
+  });
 
   const response = await swc.execute({
-    payment: native(),
+    payment: sponsored(sponsorApiKey),
     calls: [
       {
         to: chainConfig.targetContract,
