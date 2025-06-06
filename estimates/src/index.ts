@@ -2,7 +2,7 @@ import "dotenv/config";
 import { createGelatoSmartWalletClient, sponsored } from "@gelatonetwork/smartwallet";
 import { http, type Hex, createWalletClient, formatEther, encodeFunctionData, parseEther } from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { inkSepolia } from "viem/chains";
+import { getChainConfigByChainId } from "../../constants/chainConfig";
 
 const sponsorApiKey = process.env.SPONSOR_API_KEY;
 
@@ -10,15 +10,22 @@ if (!sponsorApiKey) {
   throw new Error("SPONSOR_API_KEY is not set");
 }
 
+const chainId = 421614; // Arbitrum Sepolia
+const chainConfig = getChainConfigByChainId(chainId);
+
+if (!chainConfig) {
+  throw new Error("Chain configuration not found");
+}
+
 // Counter contract address
-const counterAddress = "0xEEeBe2F778AA186e88dCf2FEb8f8231565769C27";
+const counterAddress = chainConfig.targetContract;
 
 const privateKey = (process.env.PRIVATE_KEY ?? generatePrivateKey()) as Hex;
 const account = privateKeyToAccount(privateKey);
 
 const client = createWalletClient({
   account,
-  chain: inkSepolia,
+  chain: chainConfig.chain,
   transport: http()
 });
 
@@ -44,7 +51,7 @@ createGelatoSmartWalletClient(client, { apiKey: sponsorApiKey })
     payment: sponsored(sponsorApiKey),
     calls: [
       {
-        to: counterAddress, // Using the counter contract address
+        to: counterAddress as `0x${string}`, // Using the counter contract address
         data: incrementData,
         value: 0n
       }

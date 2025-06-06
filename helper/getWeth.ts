@@ -1,11 +1,14 @@
 import "dotenv/config";
 import { http, createWalletClient, parseEther, parseAbi, createPublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { inkSepolia } from "viem/chains";
 
-// WETH contract address on Ink Sepolia
-const WETH_ADDRESS = "0x60C67E75292B101F9289f11f59aD7DD75194CCa6";
+import { getChainConfigByChainId } from "../constants/chainConfig";
 
+const chainId = 421614;
+const chainConfig = getChainConfigByChainId(chainId);
+
+// WETH contract address on Arbitrum Sepolia
+const WETH_ADDRESS = chainConfig?.tokenContract;
 // WETH ABI for deposit function
 const wethAbi = parseAbi([
     'function deposit() payable',
@@ -18,21 +21,22 @@ async function getWeth(privateKey: string, amount: string) {
   
   const walletClient = createWalletClient({
     account,
-    chain: inkSepolia,
+    chain: chainConfig?.chain,
     transport: http(),
   });
 
   const publicClient = createPublicClient({
-    chain: inkSepolia,
+    chain: chainConfig?.chain,
     transport: http(),
   });
 
   try {
     const hash = await walletClient.writeContract({
-      address: WETH_ADDRESS,
+      address: WETH_ADDRESS as `0x${string}`,
       abi: wethAbi,
       functionName: "deposit",
       value: parseEther(amount),
+      chain: chainConfig?.chain,
     });
 
     console.log(`Transaction hash: ${hash}`);
@@ -45,7 +49,7 @@ async function getWeth(privateKey: string, amount: string) {
 
     // Check WETH balance
     const balance = await publicClient.readContract({
-      address: WETH_ADDRESS,
+      address: WETH_ADDRESS as `0x${string}`,
       abi: wethAbi,
       functionName: "balanceOf",
       args: [account.address],

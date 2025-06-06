@@ -1,0 +1,52 @@
+Arguments: 
+  /Users/javiermac/.nvm/versions/node/v20.19.2/bin/node /Users/javiermac/.yarn/releases/yarn-1.22.19.cjs
+
+PATH: 
+  /Users/javiermac/.bun/bin:/Users/javiermac/.nvm/versions/node/v20.19.2/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/Library/Apple/usr/bin:/usr/local/go/bin:/Users/javiermac/.bun/bin:/Users/javiermac/.nvm/versions/node/v20.19.2/bin:/Users/javiermac/.cargo/bin:/Users/javiermac/.foundry/bin:/Users/javiermac/.rvm/bin:/Users/javiermac/.foundry/bin:/Users/javiermac/.foundry/bin:/Users/javiermac/.rvm/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  20.19.2
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: EEXIST: file already exists, mkdir '/Users/javiermac/Documents/GELATO/800-SMART-WALLET-ERC4337/INK/how-tos-1-smartwallet-sdk-examples/node_modules/@gelatonetwork/smartwallet/node_modules/@scure'
+
+npm manifest: 
+  {
+    "name": "smartwallet-examples",
+    "type": "module",
+    "scripts": {
+      "sponsored": "tsx sponsored/src/index.ts",
+      "erc20": "tsx erc20/src/index.ts",
+      "native": "tsx native/src/index.ts",
+      "kernel-sponsored": "tsx kernel-sponsored/src/index.ts",
+      "estimate": "tsx estimates/src/index.ts",
+      "getWeth": "tsx helper/getWeth.ts"
+    },
+    "dependencies": {
+      "@gelatonetwork/smartwallet": "0.0.7",
+      "ts-node": "^10.9.2",
+      "viem": "^2.29"
+    },
+    "devDependencies": {
+      "@nomicfoundation/hardhat-ethers": "^3.0.8",
+      "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+      "@types/node": "latest",
+      "dotenv": "^16.5.0",
+      "ethers": "^6.14.3",
+      "hardhat": "^2.24.2",
+      "tsx": "^4.19.4",
+      "typescript": "^5.3"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
