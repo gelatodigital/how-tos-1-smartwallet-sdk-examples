@@ -12,7 +12,7 @@
     "getWeth": "tsx helper/getWeth.ts"
   },
   "dependencies": {
-    "@gelatonetwork/smartwallet": "0.0.7",
+    "@gelatonetwork/smartwallet": "0.0.9",
     "ts-node": "^10.9.2",
     "viem": "^2.29"
   },
