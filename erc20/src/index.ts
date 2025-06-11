@@ -54,10 +54,10 @@ console.log("Encoded increment() function data:", incrementData);
   const swc = await createGelatoSmartWalletClient(client);
 
   const response = await swc.execute({
-    payment: erc20(chainConfig.tokenContract),
+    payment: erc20(chainConfig.tokenContract?.weth as `0x${string}`), // select usdc or weth
     calls: [
       {
-        to: chainConfig.targetContract, // Using the counter contract address
+        to: chainConfig.targetContract as `0x${string}`, // Using the counter contract address
         data: incrementData,
         value: 0n,
       },
@@ -72,7 +72,7 @@ console.log("Encoded increment() function data:", incrementData);
 
   // Listen for events
   response.on("success", (status: GelatoTaskStatus) => {
-    console.log(`Transaction successful: ${status.transactionHash}`);
+    console.log(`Transaction successful: ${chainConfig.blockExplorer}/tx/${status.transactionHash}`);
     process.exit(0);
   });
   response.on("error", (error: Error) => {

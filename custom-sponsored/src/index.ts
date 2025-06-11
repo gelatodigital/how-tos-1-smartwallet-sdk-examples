@@ -52,7 +52,7 @@ const publicClient = createPublicClient({
     client: publicClient,
     authorization: {
       account: owner,
-      address: "0x11923b4c785d87bb34da4d4e34e9feea09179289",
+      address: "0x11923b4c785d87bb34da4d4e34e9feea09179289", // delegation address
     },
     entryPoint: {
       abi: entryPoint08Abi,
@@ -81,7 +81,7 @@ const publicClient = createPublicClient({
     payment: sponsored(sponsorApiKey),
     calls: [
       {
-        to: chainConfig.targetContract!,
+        to: chainConfig.targetContract as `0x${string}`,
         data: incrementData,
         value: 0n,
       },
@@ -96,7 +96,7 @@ const publicClient = createPublicClient({
 
   // Listen for events
   response.on("success", (status: GelatoTaskStatus) => {
-    console.log(`Transaction successful: ${status.transactionHash}`);
+    console.log(`Transaction successful: ${chainConfig.blockExplorer}/tx/${status.transactionHash}`);
     process.exit(0);
   });
   response.on("error", (error: Error) => {

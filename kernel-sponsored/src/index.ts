@@ -16,7 +16,7 @@ if (!sponsorApiKey) {
   throw new Error("SPONSOR_API_KEY is not set");
 }
 //Note: Ink Sepolia Chain Config, Use the chain name to get the chain config
-const chainConfig = getChainConfigByName("inkSepolia") as ChainConfig;
+const chainConfig = getChainConfigByName("baseSepolia") as ChainConfig;
 
 // Example of creating a payload for increment() function
 const incrementAbi = [{
@@ -47,7 +47,7 @@ const publicClient = createPublicClient({
   const account = await kernel({
     owner,
     client: publicClient,
-    eip7702: false,
+    eip7702: false, // set to true if you want to use EIP-7702 with ERC-4337
   });
 
   console.log("Account address:", account.address);
@@ -66,7 +66,7 @@ const publicClient = createPublicClient({
     payment: sponsored(sponsorApiKey),
     calls: [
       {
-        to: chainConfig.targetContract,
+        to: chainConfig.targetContract as `0x${string}`,
         data: incrementData,
         value: 0n,
       },
@@ -81,7 +81,7 @@ const publicClient = createPublicClient({
 
   // Listen for events
   response.on("success", (status: GelatoTaskStatus) => {
-    console.log(`Transaction successful: ${status.transactionHash}`);
+    console.log(`Transaction successful: ${chainConfig.blockExplorer}/tx/${status.transactionHash}`);
     process.exit(0);
   });
   response.on("error", (error: Error) => {

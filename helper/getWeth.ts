@@ -29,7 +29,7 @@ async function getWeth(privateKey: string, amount: string) {
 
   try {
     const hash = await walletClient.writeContract({
-      address: chainConfig.tokenContract! as `0x${string}`,
+      address: chainConfig.tokenContract?.weth as `0x${string}`,
       abi: wethAbi,
       functionName: "deposit",
       value: parseEther(amount),
@@ -45,7 +45,7 @@ async function getWeth(privateKey: string, amount: string) {
 
     // Check WETH balance
     const balance = await publicClient.readContract({
-      address: chainConfig.tokenContract! as `0x${string}`,
+      address: chainConfig.tokenContract?.weth as `0x${string}`,
       abi: wethAbi,
       functionName: "balanceOf",
       args: [account.address],
@@ -67,7 +67,7 @@ if (!privateKey) {
 }
 
 // Amount of ETH to convert to WETH
-const amount = "0.1";
+const amount = "0.005";
 
 async function main() {
   try {

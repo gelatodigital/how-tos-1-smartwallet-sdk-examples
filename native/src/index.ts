@@ -70,7 +70,7 @@ const publicClient = createPublicClient({
     payment: native(),
     calls: [
       {
-        to: chainConfig.targetContract,
+        to: chainConfig.targetContract as `0x${string}`,
         data: incrementData,
         value: 0n,
       },
@@ -85,7 +85,7 @@ const publicClient = createPublicClient({
 
   // Listen for events
   response.on("success", (status: GelatoTaskStatus) => {
-    console.log(`Transaction successful: ${status.transactionHash}`);
+    console.log(`Transaction successful: ${chainConfig.blockExplorer}/tx/${status.transactionHash}`);
     process.exit(0);
   });
   response.on("error", (error: Error) => {

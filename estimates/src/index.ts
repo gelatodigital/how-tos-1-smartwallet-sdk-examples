@@ -73,7 +73,7 @@ const publicClient = createPublicClient({
     payment: sponsored(sponsorApiKey),
     calls: [
       {
-        to: chainConfig.targetContract,
+        to: chainConfig.targetContract as `0x${string}`,
         data: incrementData,
         value: 0n,
       },
