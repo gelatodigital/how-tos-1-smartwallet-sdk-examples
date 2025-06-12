@@ -267,4 +267,71 @@ const userOpHash = await kernelClient.sendUserOperation({
 })
 ```
 
+## Testing on Different Networks
+
+The SDK supports multiple test networks including Ink Sepolia, Arbitrum Sepolia, and Base Sepolia. The chain configurations are managed in `constants/chainConfig.ts`.
+
+### Testing on Arbitrum Sepolia
+
+To test on Arbitrum Sepolia:
+
+1. Update your `.env` file with the appropriate RPC URL:
+```
+RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
+```
+
+2. Modify your client configuration to use Arbitrum Sepolia:
+```typescript
+import { arbitrumSepolia } from 'viem/chains'
+import { chainConfig } from '../constants/chainConfig'
+
+// Create a smart wallet client for Arbitrum Sepolia
+const smartWalletClient = await createSmartWalletClient({
+  owner: privateKeyToAccount(process.env.PRIVATE_KEY!),
+  chain: arbitrumSepolia,
+  transport: http(process.env.RPC_URL),
+})
+```
+
+3. Available Payment Tokens:
+   - Native ETH: Use for gas fees and native transactions
+   - WETH: Available at `chainConfig.arbitrumSepolia.tokenContract`
+   - USDC: Available at `chainConfig.arbitrumSepolia.usdcContract`
+
+4. Example: Sending a transaction with WETH on Arbitrum Sepolia:
+```typescript
+import { chainConfig } from '../constants/chainConfig'
+
+const tokenAddress = chainConfig.arbitrumSepolia.tokenContract
+
+// Send WETH transaction
+const hash = await smartWalletClient.writeContract({
+  address: tokenAddress,
+  abi: erc20Abi,
+  functionName: 'transfer',
+  args: ['0x...', parseEther('0.1')],
+})
+```
+
+5. Example: Sending a sponsored transaction:
+```typescript
+const sponsoredClient = await createSmartWalletClient({
+  owner: privateKeyToAccount(process.env.PRIVATE_KEY!),
+  chain: arbitrumSepolia,
+  transport: http(process.env.RPC_URL),
+  sponsorApiKey: process.env.SPONSOR_API_KEY,
+})
+
+const hash = await sponsoredClient.sendTransaction({
+  to: '0x...',
+  value: parseEther('0.1'),
+})
+```
+
+Important Notes:
+- Get test ETH from the [Arbitrum Sepolia Faucet](https://sepolia-faucet.arbitrum.io/)
+- For WETH transactions, use the `getWeth.ts` helper script to convert ETH to WETH
+- For USDC transactions, get test USDC from the [Circle Faucet](https://faucet.circle.com/)
+- Monitor your transactions on [Arbitrum Sepolia Explorer](https://sepolia.arbiscan.io/)
+
 
