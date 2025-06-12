@@ -1,66 +1,102 @@
 import "dotenv/config";
 import {
   createGelatoSmartWalletClient,
+  type GelatoTaskStatus,
   sponsored,
 } from "@gelatonetwork/smartwallet";
-import { http, type Hex, createWalletClient, encodeFunctionData, parseEther } from "viem";
+import {
+  http,
+  type Hex,
+  createWalletClient,
+  encodeFunctionData,
+  createPublicClient,
+} from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { inkSepolia } from "viem/chains";
+import { gelato } from "@gelatonetwork/smartwallet/accounts";
+import { getChainConfigByName, ChainConfig } from "../../constants/chainConfig";
 
+// Sponsor API Key for configured chain
 const sponsorApiKey = process.env.SPONSOR_API_KEY;
-
 if (!sponsorApiKey) {
   throw new Error("SPONSOR_API_KEY is not set");
 }
 
-// Counter contract address
-const counterAddress = "0xEEeBe2F778AA186e88dCf2FEb8f8231565769C27";
-
-const privateKey = (process.env.PRIVATE_KEY ?? generatePrivateKey()) as Hex;
-const account = privateKeyToAccount(privateKey);
-
-const client = createWalletClient({
-  account,
-  chain: inkSepolia,
-  transport: http(),
-});
+//Note: Ink Sepolia Chain Config, Use the chain name to get the chain config
+const chainConfig = getChainConfigByName("sepolia") as ChainConfig;
 
 // Example of creating a payload for increment() function
-const incrementAbi = [{
-  name: "increment",
-  type: "function",
-  stateMutability: "nonpayable",
-  inputs: [],
-  outputs: []
-}] as const;
+const incrementAbi = [
+  {
+    name: "increment",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [],
+    outputs: [],
+  },
+] as const;
 
 // Create the encoded function data
 const incrementData = encodeFunctionData({
   abi: incrementAbi,
-  functionName: "increment"
+  functionName: "increment",
 });
 
 console.log("Encoded increment() function data:", incrementData);
 
-createGelatoSmartWalletClient(client, { apiKey: sponsorApiKey })
-  .execute({
-    payment: sponsored(),
+const privateKey = (process.env.PRIVATE_KEY ?? generatePrivateKey()) as Hex;
+const owner = privateKeyToAccount(privateKey);
+
+const publicClient = createPublicClient({
+  chain: chainConfig.chain,
+  transport: http(),
+});
+
+(async () => {
+  const account = await gelato({
+    owner,
+    client: publicClient,
+  });
+
+  console.log("Account address:", account.address);
+  const client = createWalletClient({
+    account,
+    chain: chainConfig.chain,
+    transport: http(),
+  });
+
+  const swc = await createGelatoSmartWalletClient(client, {
+    apiKey: sponsorApiKey,
+  });
+
+  console.log("Preparing transaction...");
+  const preparedCalls = await swc.prepare({
+    payment: sponsored(sponsorApiKey),
     calls: [
       {
-        to: counterAddress, // Using the counter contract address
+        to: chainConfig.targetContract as `0x${string}`,
         data: incrementData,
         value: 0n,
       },
     ],
-  })
-  .then(async (response) => {
-    console.log(`Your Gelato id is: ${response.id}`);
-    console.log(
-      `Check the status of your request here: https://api.gelato.digital/tasks/status/${response.id}`
-    );
-    console.log("Waiting for transaction to be confirmed...");
-    const txHash = await response.wait();
-    console.log(`Transaction hash: ${txHash}`);
+  });
 
+  const response = await swc.send({
+    preparedCalls,
+  });
+
+  console.log(`Your Gelato id is: ${response.id}`);
+  console.log(
+    `Check the status of your request here: https://api.gelato.digital/tasks/status/${response.id}`
+  );
+  console.log("Waiting for transaction to be confirmed...");
+
+  // Listen for events
+  response.on("success", (status: GelatoTaskStatus) => {
+    console.log(`Transaction successful: ${chainConfig.blockExplorer}/tx/${status.transactionHash}`);
     process.exit(0);
   });
+  response.on("error", (error: Error) => {
+    console.error(`Transaction failed: ${error.message}`);
+    process.exit(1);
+  });
+})();

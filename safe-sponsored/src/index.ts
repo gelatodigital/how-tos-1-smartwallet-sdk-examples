@@ -1,12 +1,18 @@
 import "dotenv/config";
 import {
+  type GelatoTaskStatus,
   createGelatoSmartWalletClient,
   sponsored,
-  type GelatoTaskStatus,
 } from "@gelatonetwork/smartwallet";
-import { http, type Hex, createWalletClient, encodeFunctionData, createPublicClient, Chain } from "viem";
+import { safe } from "@gelatonetwork/smartwallet/accounts";
+import {
+  http,
+  type Hex,
+  createPublicClient,
+  createWalletClient,
+  encodeFunctionData,
+} from "viem";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { kernel } from "@gelatonetwork/smartwallet/accounts";
 import { getChainConfigByName, ChainConfig } from "../../constants/chainConfig";
 
 // Sponsor API Key for configured chain
@@ -16,21 +22,23 @@ if (!sponsorApiKey) {
   throw new Error("SPONSOR_API_KEY is not set");
 }
 //Note: Ink Sepolia Chain Config, Use the chain name to get the chain config
-const chainConfig = getChainConfigByName("baseSepolia") as ChainConfig;
+const chainConfig = getChainConfigByName("inkSepolia") as ChainConfig;
 
 // Example of creating a payload for increment() function
-const incrementAbi = [{
-  name: "increment",
-  type: "function",
-  stateMutability: "nonpayable",
-  inputs: [],
-  outputs: []
-}] as const;
+const incrementAbi = [
+  {
+    name: "increment",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [],
+    outputs: [],
+  },
+] as const;
 
 // Create the encoded function data
 const incrementData = encodeFunctionData({
   abi: incrementAbi,
-  functionName: "increment"
+  functionName: "increment",
 });
 
 console.log("Encoded increment() function data:", incrementData);
@@ -44,10 +52,10 @@ const publicClient = createPublicClient({
 });
 
 (async () => {
-  const account = await kernel({
-    owner,
+  const account = await safe({
     client: publicClient,
-    eip7702: false, // set to true if you want to use EIP-7702 with ERC-4337
+    owners: [owner],
+    version: "1.4.1",
   });
 
   console.log("Account address:", account.address);

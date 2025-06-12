@@ -1,10 +1,10 @@
 import "dotenv/config";
 import { http, createWalletClient, parseEther, parseAbi, createPublicClient } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { inkSepolia } from "viem/chains";
+import { getChainConfigByName, ChainConfig } from "../constants/chainConfig";
 
-// WETH contract address on Ink Sepolia
-const WETH_ADDRESS = "0x60C67E75292B101F9289f11f59aD7DD75194CCa6";
+// Get chain config
+const chainConfig = getChainConfigByName("inkSepolia") as ChainConfig;
 
 // WETH ABI for deposit function
 const wethAbi = parseAbi([
@@ -18,25 +18,25 @@ async function getWeth(privateKey: string, amount: string) {
   
   const walletClient = createWalletClient({
     account,
-    chain: inkSepolia,
+    chain: chainConfig.chain,
     transport: http(),
   });
 
   const publicClient = createPublicClient({
-    chain: inkSepolia,
+    chain: chainConfig.chain,
     transport: http(),
   });
 
   try {
     const hash = await walletClient.writeContract({
-      address: WETH_ADDRESS,
+      address: chainConfig.tokenContract?.weth as `0x${string}`,
       abi: wethAbi,
       functionName: "deposit",
       value: parseEther(amount),
     });
 
     console.log(`Transaction hash: ${hash}`);
-    console.log(`View transaction: https://explorer-sepolia.inkonchain.com/tx/${hash}`);
+    console.log(`View transaction: ${chainConfig.blockExplorer}/tx/${hash}`);
     
     // Wait for transaction to be finalized
     console.log("Waiting for transaction to be finalized...");
@@ -45,7 +45,7 @@ async function getWeth(privateKey: string, amount: string) {
 
     // Check WETH balance
     const balance = await publicClient.readContract({
-      address: WETH_ADDRESS,
+      address: chainConfig.tokenContract?.weth as `0x${string}`,
       abi: wethAbi,
       functionName: "balanceOf",
       args: [account.address],
@@ -67,7 +67,7 @@ if (!privateKey) {
 }
 
 // Amount of ETH to convert to WETH
-const amount = "0.1";
+const amount = "0.005";
 
 async function main() {
   try {

@@ -1,39 +1,40 @@
 import "dotenv/config";
 import {
+  type GelatoTaskStatus,
   createGelatoSmartWalletClient,
   sponsored,
-  type GelatoTaskStatus,
 } from "@gelatonetwork/smartwallet";
-import { http, type Hex, createWalletClient, encodeFunctionData, createPublicClient, Chain } from "viem";
+import { custom } from "@gelatonetwork/smartwallet/accounts";
+import { http, type Hex, createPublicClient, createWalletClient, encodeFunctionData } from "viem";
+import { entryPoint08Abi, entryPoint08Address } from "viem/account-abstraction";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
-import { kernel } from "@gelatonetwork/smartwallet/accounts";
 import { getChainConfigByName, ChainConfig } from "../../constants/chainConfig";
 
-// Sponsor API Key for configured chain
 const sponsorApiKey = process.env.SPONSOR_API_KEY;
 
 if (!sponsorApiKey) {
   throw new Error("SPONSOR_API_KEY is not set");
 }
-//Note: Ink Sepolia Chain Config, Use the chain name to get the chain config
-const chainConfig = getChainConfigByName("baseSepolia") as ChainConfig;
+
+// Get chain config
+const chainConfig = getChainConfigByName("inkSepolia") as ChainConfig;
 
 // Example of creating a payload for increment() function
-const incrementAbi = [{
-  name: "increment",
-  type: "function",
-  stateMutability: "nonpayable",
-  inputs: [],
-  outputs: []
-}] as const;
+const incrementAbi = [
+  {
+    name: "increment",
+    type: "function",
+    stateMutability: "nonpayable",
+    inputs: [],
+    outputs: [],
+  },
+] as const;
 
 // Create the encoded function data
 const incrementData = encodeFunctionData({
   abi: incrementAbi,
-  functionName: "increment"
+  functionName: "increment",
 });
-
-console.log("Encoded increment() function data:", incrementData);
 
 const privateKey = (process.env.PRIVATE_KEY ?? generatePrivateKey()) as Hex;
 const owner = privateKeyToAccount(privateKey);
@@ -44,10 +45,24 @@ const publicClient = createPublicClient({
 });
 
 (async () => {
-  const account = await kernel({
+  // Defining an EIP7702 account using as delegation address "0x11923b4c785d87bb34da4d4e34e9feea09179289"
+  // Using ERC4337 and entry point v0.8
+  const account = await custom<typeof entryPoint08Abi, "0.8">({
     owner,
     client: publicClient,
-    eip7702: false, // set to true if you want to use EIP-7702 with ERC-4337
+    authorization: {
+      account: owner,
+      address: "0x11923b4c785d87bb34da4d4e34e9feea09179289", // delegation address
+    },
+    entryPoint: {
+      abi: entryPoint08Abi,
+      address: entryPoint08Address,
+      version: "0.8",
+    },
+    scw: {
+      encoding: "erc7821",
+    },
+    eip7702: true,
   });
 
   console.log("Account address:", account.address);

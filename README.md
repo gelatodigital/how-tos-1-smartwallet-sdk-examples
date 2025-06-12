@@ -35,15 +35,29 @@ const client = createWalletClient({
 })
 ```
 
-## WETH Helper
 
-For ERC20 payment examples, you'll need WETH (Wrapped Ether) as the payment token. You can use the provided helper to convert ETH to WETH:
+## ERC20 Payment Tokens
+
+### WETH (Wrapped Ether)
+For transactions using WETH as the payment token, you'll need to convert your ETH to WETH first. The repository includes a helper script to do this:
 
 ```bash
 tsx helper/getWeth.ts
 ```
 
-This will convert 0.1 ETH to WETH by default. You can modify the amount in the script if needed.
+By default, this script converts 0.1 ETH to WETH. To modify the amount:
+1. Open `helper/getWeth.ts`
+2. Adjust the `amount` parameter in the script
+3. Run the script again
+
+### USDC (USD Coin)
+For transactions using USDC as the payment token:
+
+1. Check the supported networks in `constants/chainConfigs.ts`
+2. Get test USDC from the [Circle Faucet](https://faucet.circle.com/) for your chosen network
+3. Ensure you have enough USDC in your wallet for the transaction
+
+Note: The amount of USDC needed will depend on the gas costs and transaction requirements of your specific operation.
 
 ## Running Examples
 
