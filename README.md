@@ -35,6 +35,38 @@ const client = createWalletClient({
 })
 ```
 
+## Testing on Different Networks
+
+The SDK supports multiple test networks including Ink Sepolia, Arbitrum Sepolia, and Base Sepolia. The chain configurations are managed in `constants/chainConfig.ts`.
+
+### Testing on Arbitrum Sepolia
+
+To test on Arbitrum Sepolia:
+
+1. Update your `.env` file with the appropriate RPC URL:
+```
+RPC_URL=https://sepolia-rollup.arbitrum.io/rpc
+```
+
+2. Modify your client configuration to use Arbitrum Sepolia:
+```typescript
+import { arbitrumSepolia } from 'viem/chains'
+
+const client = createWalletClient({
+  chain: arbitrumSepolia,
+  transport: http(process.env.RPC_URL),
+})
+```
+
+3. For ERC20 transactions, use the configured token contract address from `chainConfig.ts`:
+```typescript
+import { chainConfig } from '../constants/chainConfig'
+
+const tokenAddress = chainConfig.arbitrumSepolia.tokenContract
+```
+
+Note: Make sure you have test ETH on Arbitrum Sepolia for gas fees. You can get test ETH from the [Arbitrum Sepolia Faucet](https://sepolia-faucet.arbitrum.io/).
+
 ## WETH Helper
 
 For ERC20 payment examples, you'll need WETH (Wrapped Ether) as the payment token. You can use the provided helper to convert ETH to WETH:
