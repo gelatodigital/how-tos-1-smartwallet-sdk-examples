@@ -7,19 +7,118 @@
 
 ## Quick Start
 
-1. Install dependencies:
+> **Note:** The project is pre-configured for **Ink Sepolia** testnet, but you can easily switch to other supported networks.  
+> Check available networks in `constants/chainConfig.ts` and update the example files by changing the Network name.
+
+### Step 1: Clone and Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/gelatodigital/how-tos-1-smartwallet-sdk-examples.git
+cd how-tos-1-smartwallet-sdk-examples
+
+# Install dependencies
 pnpm install
 ```
 
-2. Copy the environment file and configure it with your credentials:
+### Step 2: Environment Configuration
+
+Create your environment file:
 
 ```bash
-cp .env.example .env
+# Create .env file manually
+touch .env
 ```
 
-Then edit the `.env` file with your private key and optional sponsor API key (required for sponsored transactions).
+Add the following variables to your `.env` file:
+
+```env
+# Your private key (optional - random key will be generated if not provided)
+PRIVATE_KEY=your_private_key_here
+
+# Sponsor API key for gasless transactions (get from https://relay.gelato.network)
+SPONSOR_API_KEY=your_sponsor_api_key_here
+```
+
+**Quick Setup:** You can start with just the `SPONSOR_API_KEY` for sponsored transactions, or leave `PRIVATE_KEY` empty to use a generated key.
+
+### Step 3: Get Your Sponsor API Key
+
+For **sponsored transactions** (gasless), you'll need a Sponsor API Key:
+
+1. Visit the [Gelato Relay App](https://relay.gelato.network)
+2. Create an account and generate a Sponsor API Key for **Ink Sepolia**
+3. Add the key to your `.env` file
+
+**Need help?** Check out our [How to Create a Sponsor API Key Guide](https://docs.gelato.cloud/smart-wallets/how-to-guides/create-a-sponsor-api-key)
+
+### Step 4: Get Test Tokens
+
+For testing on **Ink Sepolia**:
+
+- **WETH**: Convert ETH to WETH using our helper script (see ERC20 section below)
+
+---
+
+## Quick Demo
+
+Want to see it in action? Try this simple sponsored transaction:
+
+```bash
+# Run a sponsored transaction (requires SPONSOR_API_KEY)
+pnpm sponsored
+```
+
+This will:
+1. Create a smart wallet
+2. Send a sponsored transaction
+3. Show you the transaction hash
+
+---
+
+## Run All Examples
+
+### Sponsored Transactions (Gasless)
+```bash
+pnpm sponsored
+```
+Send transactions without paying gas fees using your Sponsor API Key.
+
+### ERC20 Gas Payments
+```bash
+# First, get WETH for gas payments
+pnpm getWeth
+
+# Then run ERC20 example
+pnpm erc20
+```
+Pay for transactions using WETH instead of native ETH.
+
+### Native Gas Payments
+```bash
+pnpm native
+```
+Traditional transactions using native ETH for gas fees.
+
+### Gas Estimation
+```bash
+pnpm estimate
+```
+Learn how to estimate gas costs before sending transactions.
+
+### Smart Account Examples
+```bash
+# Kernel smart account with sponsorship
+pnpm kernel-sponsored
+
+# Safe smart account with sponsorship  
+pnpm safe-sponsored
+
+# Custom sponsored transactions
+pnpm custom-sponsored
+```
+
+---
 
 ## Chain Configuration
 
@@ -250,7 +349,7 @@ const kernelAccount = await createKernelAccount(publicClient as any, {
 const kernelClient = createKernelAccountClient({
   account: kernelAccount,
   chain: inkSepolia,
-  bundlerTransport: http(process.env.NEXT_PUBLIC_ULTRA_RELAY_URL || ""),
+  bundlerTransport: http(process.env.NEXT_PUBLIC_GELATO_RELAY_URL || ""),
   paymaster: undefined,
   userOperation: {
     estimateFeesPerGas: async ({ bundlerClient }: { bundlerClient: any }) => {
