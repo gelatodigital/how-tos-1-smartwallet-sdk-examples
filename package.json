@@ -9,10 +9,13 @@
     "estimate": "tsx estimates/src/index.ts",
     "safe-sponsored": "tsx safe-sponsored/src/index.ts",
     "custom-sponsored": "tsx custom-sponsored/src/index.ts",
-    "getWeth": "tsx helper/getWeth.ts"
+    "getWeth": "tsx helper/getWeth.ts",
+    "okx-sponsored": "tsx okx-sponsored/src/index.ts",
+    "trust-wallet-sponsored": "tsx trust-wallet-sponsored/src/index.ts"
   },
   "dependencies": {
-    "@gelatonetwork/smartwallet": "0.0.9",
+    "@gelatonetwork/smartwallet": "0.0.17",
+    "permissionless": "^0.2.48",
     "ts-node": "^10.9.2",
     "viem": "^2.29"
   },
